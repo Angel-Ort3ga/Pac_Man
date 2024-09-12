@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man Game</title>
+    <style type="text/css">
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(226, 208, 230);
+        }
+        .game-container {
+            display: flex;
+            align-items: center;
+        }
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .timer, .score {
+            width: 100px;
+            height: 50px;
+            background: black;
+            color: white;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            line-height: 50px;
+            border: 2px solid white;
+            margin-bottom: 10px;
+        }
+        canvas {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="info-panel">
+            <div class="timer" id="timer">00:00</div>
+            <div class="score" id="score">SCORE: 0</div>
+        </div>
+        <canvas id="my_canvas" width="800" height="500"></canvas>
+    </div>
+
+    <script type="text/javascript">
+        const my_canvas = document.getElementById('my_canvas');
+        const ctx = my_canvas.getContext('2d');
+        const timer = document.getElementById('timer');
+        const scoreDisplay = document.getElementById('score');
+
+        var direction = "";
+        var speed = 5;
+        var walls = [];
+        var pause = false;
+        var score = 0;
+        var startTime = Date.now();
+
+        var pauseStartTime = 0;
+        var totalPausedTime = 0;
+
+        var imagen = new Image();
+        imagen.src = "stitch.png";
+
+        var imagen2 = new Image();
+        imagen2.src = "stitch.png";
+
+        const audio = new Audio("cuak.mp3");
+        const audio2 = new Audio("error.mp3");
+        const audio3 = new Audio("pew_pew.mp3");
+        const audio4 = new Audio("el.mp3");
+
+        class Rectangulo {
+            constructor(x, y, w, h, c, s) {
+                this.x = x;
+                this.y = y;
+                this.w = w;
+                this.h = h;
+                this.c = c;
+                this.s = s;
+            }
+
+            tocar(otro) {
+                if (this.x < otro.x + otro.w &&
+                    this.x + this.w > otro.x &&
+                    this.y < otro.y + otro.h &&
+                    this.y + this.h > otro.y) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        var player = new Rectangulo(280, 280, 30, 30, getRandomColor(), 10);
+        var target = new Rectangulo(100, 100, 30, 30, getRandomColor(), 10);
+
+         //paredes arriba
+         walls.push(wall = new Rectangulo(0,0,400,10,getRandomColor(),10));
+        walls.push(wall2 = new Rectangulo(450,0,350,10,getRandomColor(),10));
+
+        //paredes abajo
+        walls.push(wall3 = new Rectangulo(0,490,400,10,getRandomColor(),10));
+        walls.push(wall4 = new Rectangulo(450,490,400,10,getRandomColor(),10));
+
+        //paredes izquierda
+        walls.push(wall5 = new Rectangulo(0,0,10,220,getRandomColor(),10));
+        walls.push(wall6 = new Rectangulo(0,280,10,220,getRandomColor(),10));
+
+        //paredes derecha
+        walls.push(wall7 = new Rectangulo(790,0,10,220,getRandomColor(),10));
+        walls.push(wall8 = new Rectangulo(790,280,10,220,getRandomColor(),10));
+
+        document.addEventListener("keydown", function(e) {
+            switch (e.keyCode) {
+                case 87:
+                    direction = "up";
+                    break;
+                case 83:
+                    direction = "down";
+                    break;
+                case 65:
+                    direction = "left";
+                    break;
+                case 68:
+                    direction = "right";
+                    break;
+                case 32:
+                    pause = !pause;
+                    audio.play();
+                    if (pause) {
+                pauseStartTime = Date.now();
+                } else {
+                    totalPausedTime += Date.now() - pauseStartTime;
+                }
+                    break;
+            }
+        });
+
+        function update() {
+            if (!pause) {
+                switch (direction) {
+                    case "up":
+                        player.y -= speed;
+                        if (player.y + 50 < 0) {
+                            player.y = 510;
+                        }
+                        break;
+                    case "down":
+                        player.y += speed;
+                        if (player.y + 50 > 510) {
+                            player.y = -40;
+                        }
+                        break;
+                    case "left":
+                        player.x -= speed;
+                        if (player.x + 50 < 0) {
+                            player.x = 810;
+                        }
+                        break;
+                    case "right":
+                        player.x += speed;
+                        if (player.x + 50 > 810) {
+                            player.x = -40;
+                        }
+                        break;
+                }
+            }
+
+            if (player.tocar(target)) {
+                target.c = getRandomColor();
+                target.x = Math.floor(Math.random() * 750);
+                target.y = Math.floor(Math.random() * 450);
+                score += 5;
+                audio3.play();
+            }
+
+            walls.forEach(wall => {
+                if(player.tocar(wall) || player.tocar(wall2)
+                || player.tocar(wall3)|| player.tocar(wall4)
+                || player.tocar(wall5)|| player.tocar(wall6)
+                || player.tocar(wall7)|| player.tocar(wall8)){
+                    switch (direction) {
+                        case "up":
+                            player.y += speed;
+                            break;
+                        case "down":
+                            player.y -= speed;
+                            break;
+                        case "left":
+                            player.x += speed;
+                            break;
+                        case "right":
+                            player.x -= speed;
+                            break;
+                    }
+                    //audio2.play();
+                }
+            });
+
+            // Actualizar temporizador
+            let elapsedTime = Math.floor((Date.now() - startTime - totalPausedTime) / 1000);
+            let minutes = Math.floor(elapsedTime / 60);
+            let seconds = elapsedTime % 60;
+            timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Actualizar puntaje
+            scoreDisplay.textContent = `SCORE: ${score}`;
+        }
+
+        function pintar() {
+            ctx.fillStyle = "pink";
+            ctx.fillRect(0, 0, 800, 500);
+
+            ctx.fillStyle = getRandomColor();
+
+            // Player
+            ctx.fillStyle = player.c;
+            ctx.fillRect(player.x, player.y, 50, 50);
+            ctx.strokeRect(player.x, player.y, 50, 50);
+            ctx.drawImage(imagen, player.x, player.y, 50, 50);
+
+            // Target
+            ctx.fillStyle = target.c;
+            ctx.fillRect(target.x, target.y, target.w, target.h);
+            ctx.strokeRect(target.x, target.y, target.w, target.h);
+            ctx.drawImage(imagen2, target.x, target.y, target.w, target.h);
+
+            walls.forEach(wall => {
+                // Wall
+                ctx.fillStyle = wall.c;
+                ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+                ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
+            });
+
+            if (pause) {
+                ctx.fillStyle = "rgba(172,6,135,0.21)";
+                ctx.fillRect(0, 0, 800, 500);
+
+                ctx.font = "60px Pixelify Sans";
+                ctx.strokeText("P A U S E", 280, 250);
+            }
+
+            update();
+            requestAnimationFrame(pintar);
+        }
+
+        requestAnimationFrame(pintar);
+
+        function getRandomColor() {
+            var trans = '0.5';
+            var color = 'rgba(';
+            for (var i = 0; i < 3; i++) {
+                color += Math.floor(Math.random() * 255) + ',';
+            }
+            color += trans + ')';
+            return color;
+        }
+    </script>
+</body>
+</html>
