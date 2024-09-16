@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Cmpatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pac-Man</title>
     <style>
-        #canvas{
-            box-shadow: 10px 10px 20px black;
-        }
-        h1{
-            text-align: center;
-            font-family: comic sans MS;
-            color: rgb(238, 208, 39);
-        }
-        body{
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
-            height: 100vh;
-            background-color: linear-gradient(
-                0deg,
-                rgb(17,51,161) 0%,
-                rgb(136, 34, 195) 100%
-            );
-        }
+      #Canvas {
+        box-shadow: 10px 10px 20px black;
+      }
+      h1 {
+        text-align: center;
+        font-family: comic sans MS;
+        color: lightgrey;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+        height: 100vh;
+        background: linear-gradient(
+          0deg,
+          rgb(196, 36, 169) 0%,
+          rgb(85, 195, 34) 100%
+        );
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div>
-        <h1>Pac-Man</h1>
-        <canvas id="canvas"></canvas>
+      <h1>Pac-Man</h1>
+      <canvas id="Canvas"></canvas>
     </div>
-    <script src = "src/Game.js" type="module"></script>
-</body>
+    <script src="src/Game.js" type="module"></script>
+  </body>
 </html>
