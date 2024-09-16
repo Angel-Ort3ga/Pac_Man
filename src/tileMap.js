@@ -1,3 +1,4 @@
+// src/TileMap.js
 import Pacman from "./Pacman.js";
 import Moving from "./Moving.js";
 
@@ -60,15 +61,9 @@ export default class TileMap {
           this.drawWall(ctx, colum, row, this.tileSize);
         } else if (tile === 0) {
           this.drawDot(ctx, colum, row, this.tileSize);
+        } else {
+          this.drawBlank(ctx, colum, row, this.tileSize);
         }
-
-        ctx.strokeStyle = "yellow";
-        ctx.strokeRect(
-          colum * this.tileSize,
-          row * this.tileSize,
-          this.tileSize,
-          this.tileSize
-        );
       }
     }
   }
@@ -93,6 +88,11 @@ export default class TileMap {
     );
   }
 
+  drawBlank(ctx, colum, row, size) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(colum * this.tileSize, row * this.tileSize, size, size);
+  }
+
   getPacman(velocity) {
     for (let row = 0; row < this.map.length; row++) {
       for (let colum = 0; colum < this.map[row].length; colum++) {
@@ -109,6 +109,7 @@ export default class TileMap {
         }
       }
     }
+    return null; // Asegúrate de retornar null si Pacman no se encuentra
   }
 
   setCanvasSize(canvas) {
@@ -117,6 +118,10 @@ export default class TileMap {
   }
 
   didCollideWithEvironment(x, y, direction) {
+    if (direction == null) {
+      return false; // Cambiado a false para prevenir una colisión no deseada
+    }
+
     if (
       Number.isInteger(x / this.tileSize) &&
       Number.isInteger(y / this.tileSize)
@@ -148,10 +153,20 @@ export default class TileMap {
           colum = x / this.tileSize;
           break;
       }
-      const tile = this.map[row][colum];
+      const tile = this.map[row]?.[colum]; // Asegúrate de que `row` y `colum` estén en el rango válido
       if (tile === 1) {
         return true;
       }
+    }
+    return false;
+  }
+
+  eatDot(x, y) {
+    const row = Math.floor(y / this.tileSize);
+    const colum = Math.floor(x / this.tileSize);
+    if (this.map[row]?.[colum] === 0) {
+      this.map[row][colum] = 5;
+      return true;
     }
     return false;
   }

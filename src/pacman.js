@@ -1,3 +1,4 @@
+// src/Pacman.js
 import Moving from "./Moving.js";
 
 export default class Pacman {
@@ -11,39 +12,112 @@ export default class Pacman {
     this.currentMoving = null;
     this.requestMoving = null;
 
-    document.addEventListener("keydown", this.keydown);
+    this.pacmanAnimationTimerDefault = 10;
+    this.pacmanAnimatinTimer = null;
+
+    this.pacmanImages = {
+      [Moving.up]: [],
+      [Moving.down]: [],
+      [Moving.left]: [],
+      [Moving.right]: [],
+    };
+
+    this.pacmanImageIndex = {
+      [Moving.up]: 0,
+      [Moving.down]: 0,
+      [Moving.left]: 0,
+      [Moving.right]: 0,
+    };
+
+    this.frontImage = new Image();
+    this.frontImage.src = "../images/frente.png";
+    this.frontImage.onload = () => console.log("Imagen de frente cargada.");
+
+    document.addEventListener("keydown", this.keydown.bind(this));
 
     this.loadPacmanImages();
   }
 
   draw(ctx) {
     this.move();
+    this.animation();
+    this.eatDot();
 
-    ctx.drawImage(
-      this.pacmanImages[this.pacmanImageIndex],
-      this.x,
-      this.y,
-      this.tileSize,
-      this.tileSize
-    );
+    const direction =
+      this.currentMoving !== null ? this.currentMoving : Moving.right;
+
+    if (this.currentMoving === null) {
+      ctx.drawImage(
+        this.frontImage,
+        this.x,
+        this.y,
+        this.tileSize,
+        this.tileSize
+      );
+    } else {
+      if (this.pacmanImages[direction].length > 0) {
+        ctx.drawImage(
+          this.pacmanImages[direction][this.pacmanImageIndex[direction]],
+          this.x,
+          this.y,
+          this.tileSize,
+          this.tileSize
+        );
+      }
+    }
   }
 
   loadPacmanImages() {
-    const frente = new Image();
-    frente.src = "../images/frente.png";
-    frente.onload = () => (this.pacmanImages[0] = frente);
+    const imagePaths = {
+      [Moving.up]: [
+        "../images/up.png",
+        "../images/up2.png",
+        "../images/up3.png",
+        "../images/up4.png",
+        "../images/up5.png",
+      ],
+      [Moving.down]: [
+        "../images/down.png",
+        "../images/down2.png",
+        "../images/down3.png",
+        "../images/down4.png",
+        "../images/down5.png",
+      ],
+      [Moving.left]: [
+        "../images/left.png",
+        "../images/left2.png",
+        "../images/left3.png",
+        "../images/left4.png",
+        "../images/left5.png",
+      ],
+      [Moving.right]: [
+        "../images/right.png",
+        "../images/right2.png",
+        "../images/right3.png",
+        "../images/right4.png",
+        "../images/right5.png",
+      ],
+    };
 
-    const frente2 = new Image();
-    frente2.src = "../images/frente.png";
-    frente2.onload = () => (this.pacmanImages[1] = frente2);
-
-    const frente3 = new Image();
-    frente3.src = "../images/frente2.png";
-    frente3.onload = () => (this.pacmanImages[2] = frente3);
-
-    this.pacmanImages = [frente, frente2, frente3];
-
-    this.pacmanImageIndex = 2;
+    Object.keys(imagePaths).forEach((direction) => {
+      imagePaths[direction].forEach((path, index) => {
+        const img = new Image();
+        img.src = path;
+        img.onload = () => {
+          this.pacmanImages[direction][index] = img;
+          // Si todas las imágenes para esta dirección están cargadas
+          if (
+            this.pacmanImages[direction].length === imagePaths[direction].length
+          ) {
+            console.log(`Imágenes para ${direction} cargadas.`);
+          }
+        };
+        img.onerror = () =>
+          console.error(
+            `Error al cargar la imagen de Pacman para la dirección ${direction} en la posición ${index}.`
+          );
+      });
+    });
   }
 
   move() {
@@ -58,8 +132,9 @@ export default class Pacman {
             this.y,
             this.requestMoving
           )
-        )
+        ) {
           this.currentMoving = this.requestMoving;
+        }
       }
     }
 
@@ -67,7 +142,10 @@ export default class Pacman {
       this.tileMap.didCollideWithEvironment(this.x, this.y, this.currentMoving)
     ) {
       return;
+    } else if (this.currentMoving != null && this.pacmanAnimatinTimer == null) {
+      this.pacmanAnimatinTimer = this.pacmanAnimationTimerDefault;
     }
+
     switch (this.currentMoving) {
       case Moving.up:
         this.y -= this.velocity;
@@ -84,7 +162,7 @@ export default class Pacman {
     }
   }
 
-  keydown = (event) => {
+  keydown(event) {
     if (event.keyCode === 38) {
       if (this.currentMoving === Moving.down) this.currentMoving = Moving.up;
       this.requestMoving = Moving.up;
@@ -104,5 +182,32 @@ export default class Pacman {
       if (this.currentMoving === Moving.left) this.currentMoving = Moving.right;
       this.requestMoving = Moving.right;
     }
-  };
+  }
+
+  animation() {
+    if (this.pacmanAnimatinTimer == null) {
+      return;
+    }
+    this.pacmanAnimatinTimer--;
+    if (this.pacmanAnimatinTimer <= 0) {
+      this.pacmanAnimatinTimer = this.pacmanAnimationTimerDefault;
+      const direction =
+        this.currentMoving !== null ? this.currentMoving : Moving.right;
+      if (this.pacmanImages[direction].length > 0) {
+        this.pacmanImageIndex[direction]++;
+        if (
+          this.pacmanImageIndex[direction] >=
+          this.pacmanImages[direction].length
+        ) {
+          this.pacmanImageIndex[direction] = 0;
+        }
+      }
+    }
+  }
+
+  eatDot() {
+    if (this.tileMap.eatDot(this.x, this.y)) {
+      // Puedes agregar alguna lógica adicional aquí si lo deseas
+    }
+  }
 }
