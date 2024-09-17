@@ -65,3 +65,38 @@ function gameLoop() {
   }
   requestAnimationFrame(gameLoop);
 }
+
+const backgroundMusic = new Audio("../sounds/majin.mp3");
+
+// Configurar el sonido para que se reproduzca en bucle
+backgroundMusic.loop = true;
+
+// Función para iniciar la música de fondo
+function playBackgroundMusic() {
+  backgroundMusic.play();
+}
+
+// Iniciar la música de fondo al comenzar el juego
+playBackgroundMusic();
+
+/*function pauseBackgroundMusic() {
+  backgroundMusic.pause();
+}
+
+// Reanudar la música
+function resumeBackgroundMusic() {
+  backgroundMusic.play();
+}
+
+/*const chompSound = new Audio("..sound/eat.mp3");
+
+// Función para reproducir el sonido
+function playChompSound() {
+  chompSound.play();
+}
+
+function pacmanEatDot() {
+  // Lógica para comer el punto
+  playChompSound();
+}
+*/

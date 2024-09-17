@@ -4,7 +4,6 @@ import Moving from "./Moving.js";
 
 export default class TileMap {
   constructor(tileSize) {
-    //this.map = map;
     this.tileSize = tileSize;
     this.imagesLoaded = false;
 
@@ -73,7 +72,7 @@ export default class TileMap {
               this
             )
           );
-          this.map[row][colum] = 0; // Limpiar la posición del enemigo en el mapa
+          this.map[row][colum] = 0; // Limpia la posición del enemigo en el mapa
         }
       }
     }
@@ -97,7 +96,7 @@ export default class TileMap {
         }
       }
     }
-    return null; // Asegúrate de retornar null si Pacman no se encuentra
+    return null;
   }
 
   drawDot(ctx, colum, row, size) {
