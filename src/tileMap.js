@@ -1,9 +1,10 @@
-// src/TileMap.js
 import Pacman from "./Pacman.js";
+import Enemy from "./Enemy.js";
 import Moving from "./Moving.js";
 
 export default class TileMap {
   constructor(tileSize) {
+    //this.map = map;
     this.tileSize = tileSize;
     this.imagesLoaded = false;
 
@@ -18,10 +19,11 @@ export default class TileMap {
     this.ball1.onload = () => this.checkImagesLoaded();
     this.ball1.onerror = () =>
       console.error("Error al cargar la imagen de ball1.");
+
+    this.enemies = [];
   }
 
   checkImagesLoaded() {
-    // Verificar si ambas imágenes se han cargado
     if (this.muro.complete && this.ball1.complete) {
       this.imagesLoaded = true;
     }
@@ -29,19 +31,17 @@ export default class TileMap {
 
   map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1],
+    [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1],
+    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 5, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1],
+    [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 6, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 5, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 4, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
+    [1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ];
 
@@ -61,11 +61,43 @@ export default class TileMap {
           this.drawWall(ctx, colum, row, this.tileSize);
         } else if (tile === 0) {
           this.drawDot(ctx, colum, row, this.tileSize);
-        } else {
+        } else if (tile === 4) {
           this.drawBlank(ctx, colum, row, this.tileSize);
+        } else if (tile === 6) {
+          this.enemies.push(
+            new Enemy(
+              colum * this.tileSize,
+              row * this.tileSize,
+              this.tileSize,
+              1,
+              this
+            )
+          );
+          this.map[row][colum] = 0; // Limpiar la posición del enemigo en el mapa
         }
       }
     }
+
+    this.enemies.forEach((enemy) => enemy.draw(ctx));
+  }
+
+  getPacman(velocity) {
+    for (let row = 0; row < this.map.length; row++) {
+      for (let colum = 0; colum < this.map[row].length; colum++) {
+        let tile = this.map[row][colum];
+        if (tile === 4) {
+          this.map[row][colum] != 1;
+          return new Pacman(
+            colum * this.tileSize,
+            row * this.tileSize,
+            this.tileSize,
+            velocity,
+            this
+          );
+        }
+      }
+    }
+    return null; // Asegúrate de retornar null si Pacman no se encuentra
   }
 
   drawDot(ctx, colum, row, size) {
@@ -93,25 +125,6 @@ export default class TileMap {
     ctx.fillRect(colum * this.tileSize, row * this.tileSize, size, size);
   }
 
-  getPacman(velocity) {
-    for (let row = 0; row < this.map.length; row++) {
-      for (let colum = 0; colum < this.map[row].length; colum++) {
-        let tile = this.map[row][colum];
-        if (tile === 4) {
-          this.map[row][colum] = 0;
-          return new Pacman(
-            colum * this.tileSize,
-            row * this.tileSize,
-            this.tileSize,
-            velocity,
-            this
-          );
-        }
-      }
-    }
-    return null; // Asegúrate de retornar null si Pacman no se encuentra
-  }
-
   setCanvasSize(canvas) {
     canvas.width = this.map[0].length * this.tileSize;
     canvas.height = this.map.length * this.tileSize;
@@ -119,46 +132,36 @@ export default class TileMap {
 
   didCollideWithEvironment(x, y, direction) {
     if (direction == null) {
-      return false; // Cambiado a false para prevenir una colisión no deseada
+      return false;
     }
 
+    let col = Math.floor(x / this.tileSize);
+    let row = Math.floor(y / this.tileSize);
+
+    // Ajusta la posición según la dirección del movimiento
+    if (direction === Moving.left) {
+      col -= 1;
+    } else if (direction === Moving.right) {
+      col += 1;
+    } else if (direction === Moving.up) {
+      row -= 1;
+    } else if (direction === Moving.down) {
+      row += 1;
+    }
+
+    // Verifica si la posición está fuera del mapa
     if (
-      Number.isInteger(x / this.tileSize) &&
-      Number.isInteger(y / this.tileSize)
+      row < 0 ||
+      row >= this.map.length ||
+      col < 0 ||
+      col >= this.map[row].length
     ) {
-      let colum = 0;
-      let row = 0;
-      let nextColum = 0;
-      let nextRow = 0;
-
-      switch (direction) {
-        case Moving.right:
-          nextColum = x + this.tileSize;
-          colum = nextColum / this.tileSize;
-          row = y / this.tileSize;
-          break;
-        case Moving.left:
-          nextColum = x - this.tileSize;
-          colum = nextColum / this.tileSize;
-          row = y / this.tileSize;
-          break;
-        case Moving.up:
-          nextRow = y - this.tileSize;
-          row = nextRow / this.tileSize;
-          colum = x / this.tileSize;
-          break;
-        case Moving.down:
-          nextRow = y + this.tileSize;
-          row = nextRow / this.tileSize;
-          colum = x / this.tileSize;
-          break;
-      }
-      const tile = this.map[row]?.[colum]; // Asegúrate de que `row` y `colum` estén en el rango válido
-      if (tile === 1) {
-        return true;
-      }
+      return true;
     }
-    return false;
+
+    const tile = this.map[row][col];
+    // 1 significa colisión con un obstáculo
+    return tile === 1;
   }
 
   eatDot(x, y) {

@@ -1,6 +1,5 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -18,18 +17,61 @@
       body {
         display: flex;
         justify-content: center;
+        align-items: center;
         overflow: hidden;
         height: 100vh;
         margin: 0;
         background: url("../images/fondooo.png") no-repeat center center;
         background-size: cover;
       }
+      #startScreen,
+      #pauseScreen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.8);
+      }
+      #startButton,
+      #pauseText {
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      #timer {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 24px;
+        color: white;
+        display: none;
+      }
+      #pauseScreen {
+        display: none;
+        background: rgba(255, 255, 255, 0.5);
+      }
+      #pauseText {
+        color: black;
+        font-size: 48px;
+      }
     </style>
   </head>
   <body>
+    <div id="startScreen">
+      <h1>Pac-Man</h1>
+      <button id="startButton">Jugar</button>
+      <canvas id="gameCanvas" width="500" height="500"></canvas>
+    </div>
+    <div id="pauseScreen">
+      <div id="pauseText">Pausa</div>
+    </div>
     <div>
       <h1>Pac-Man</h1>
       <canvas id="Canvas"></canvas>
+      <div id="timer">00:00</div>
     </div>
     <script src="src/Game.js" type="module"></script>
   </body>

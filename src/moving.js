@@ -1,8 +1,6 @@
-const Moving = {
-  up: 0,
-  down: 1,
-  left: 2,
-  right: 3,
-};
-
-export default Moving;
+export default class Moving {
+  static up = "up";
+  static down = "down";
+  static left = "left";
+  static right = "right";
+}

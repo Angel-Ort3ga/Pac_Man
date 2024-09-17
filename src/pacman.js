@@ -1,4 +1,3 @@
-// src/Pacman.js
 import Moving from "./Moving.js";
 
 export default class Pacman {
@@ -105,12 +104,6 @@ export default class Pacman {
         img.src = path;
         img.onload = () => {
           this.pacmanImages[direction][index] = img;
-          // Si todas las imágenes para esta dirección están cargadas
-          if (
-            this.pacmanImages[direction].length === imagePaths[direction].length
-          ) {
-            console.log(`Imágenes para ${direction} cargadas.`);
-          }
         };
         img.onerror = () =>
           console.error(
@@ -163,24 +156,25 @@ export default class Pacman {
   }
 
   keydown(event) {
-    if (event.keyCode === 38) {
-      if (this.currentMoving === Moving.down) this.currentMoving = Moving.up;
-      this.requestMoving = Moving.up;
-    }
-
-    if (event.keyCode === 40) {
-      if (this.currentMoving === Moving.up) this.currentMoving = Moving.down;
-      this.requestMoving = Moving.down;
-    }
-
-    if (event.keyCode === 37) {
-      if (this.currentMoving === Moving.right) this.currentMoving = Moving.left;
-      this.requestMoving = Moving.left;
-    }
-
-    if (event.keyCode === 39) {
-      if (this.currentMoving === Moving.left) this.currentMoving = Moving.right;
-      this.requestMoving = Moving.right;
+    switch (event.key) {
+      case "ArrowUp":
+        if (this.currentMoving === Moving.down) this.currentMoving = Moving.up;
+        this.requestMoving = Moving.up;
+        break;
+      case "ArrowDown":
+        if (this.currentMoving === Moving.up) this.currentMoving = Moving.down;
+        this.requestMoving = Moving.down;
+        break;
+      case "ArrowLeft":
+        if (this.currentMoving === Moving.right)
+          this.currentMoving = Moving.left;
+        this.requestMoving = Moving.left;
+        break;
+      case "ArrowRight":
+        if (this.currentMoving === Moving.left)
+          this.currentMoving = Moving.right;
+        this.requestMoving = Moving.right;
+        break;
     }
   }
 
