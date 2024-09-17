@@ -21,9 +21,6 @@ const startButton = document.getElementById("startButton");
 const pauseScreen = document.getElementById("pauseScreen");
 const timerElement = document.getElementById("timer");
 
-const ambientSound = new Audio("sounds/ambient.mp3");
-const eatBallSound = new Audio("sounds/eat_ball.mp3");
-
 startButton.addEventListener("click", () => {
   startScreen.style.display = "none";
   timerElement.style.display = "block";
